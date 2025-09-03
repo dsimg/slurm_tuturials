@@ -1,15 +1,19 @@
 # evaluate_model_save.py
-
 import os
 import numpy as np
 import pandas as pd
-import tensorflow as tf  # Adicionado para resolver o erro do 'tf'
+import tensorflow as tf
 from tensorflow.keras.models import load_model
 from sklearn.metrics import confusion_matrix, roc_curve, auc
 import matplotlib.pyplot as plt
 import seaborn as sns
 from tensorflow.keras.metrics import Precision, Recall, AUC
 from keras import backend as K
+
+# ================================
+# Define aqui o caminho da pasta de saída
+# ================================
+output_dir = r'/nas-ctm01/homes/dsgirao/slurm_tuturials/'  # Altera este caminho conforme necessário
 
 # ================================
 # Funções métricas customizadas
@@ -22,7 +26,7 @@ def precision_m(y_true, y_pred):
 
 def f1_m(y_true, y_pred):
     precision = precision_m(y_true, y_pred)
-    recall = recall_m(y_true, y_pred)
+    recall = recall_m(y_true, ypred)
     return 2*((precision*recall)/(precision+recall+K.epsilon()))
 
 # ================================
@@ -30,11 +34,14 @@ def f1_m(y_true, y_pred):
 # ================================
 def main():
     try:
+        # Criar a pasta de saída se não existir
+        os.makedirs(output_dir, exist_ok=True)
+
         # 📂 Diretório onde o script está
-        RESULTS_DIR = os.path.dirname(os.path.abspath(__file__))
+        script_dir = os.path.dirname(os.path.abspath(__file__))
 
         # 📂 Caminho do modelo
-        model_path = os.path.join(RESULTS_DIR, "final_model.keras")
+        model_path = os.path.join(script_dir, "final_model.keras")
 
         # Verifica se o modelo existe
         if not os.path.exists(model_path):
@@ -73,7 +80,7 @@ def main():
                 tf.convert_to_tensor(y_pred, dtype=tf.float32)
             ).numpy())
         }
-        pd.DataFrame([results]).to_csv(os.path.join(RESULTS_DIR, "evaluation_results.csv"), index=False)
+        pd.DataFrame([results]).to_csv(os.path.join(output_dir, "evaluation_results.csv"), index=False)
 
         # ================================
         # Matriz de Confusão
@@ -84,7 +91,7 @@ def main():
         plt.xlabel("Predicted")
         plt.ylabel("True")
         plt.title("Confusion Matrix - Loaded Model")
-        plt.savefig(os.path.join(RESULTS_DIR, "confusion_matrix.png"))
+        plt.savefig(os.path.join(output_dir, "confusion_matrix.png"))
         plt.close()
 
         # ================================
@@ -99,10 +106,10 @@ def main():
         plt.ylabel("True Positive Rate")
         plt.title("ROC Curve - Loaded Model")
         plt.legend(loc="lower right")
-        plt.savefig(os.path.join(RESULTS_DIR, "roc_curve.png"))
+        plt.savefig(os.path.join(output_dir, "roc_curve.png"))
         plt.close()
 
-        print(f"\nTodos os resultados e gráficos foram salvos em: {RESULTS_DIR}")
+        print(f"\nTodos os resultados e gráficos foram salvos em: {output_dir}")
 
     except Exception as e:
         print(f"Ocorreu um erro: {e}")
