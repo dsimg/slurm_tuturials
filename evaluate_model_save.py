@@ -41,15 +41,15 @@ def main():
         script_dir = os.path.dirname(os.path.abspath(__file__))
 
         # 📂 Caminho do modelo
-        model_path = os.path.join(script_dir, "final_model.keras")
+        model_path = r'\nas-ctm01\homes\dsgirao\slurm_tuturials\final_model.keras'
 
         # Verifica se o modelo existe
         if not os.path.exists(model_path):
             raise FileNotFoundError(f"Modelo não encontrado em: {model_path}")
 
         # 📂 Carregar dados de teste
-        X_test = np.load(r"C:\Users\dsimg\Desktop\Projeto\Data\Test set\2D\X_test_2D.npy")
-        y_test = np.load(r"C:\Users\dsimg\Desktop\Projeto\Data\Test set\y_test.npy")
+        X_test = np.load(r'\nas-ctm01\homes\dsgirao\slurm_tuturials\X_test_2D.npy')
+        y_test = np.load(r'\nas-ctm01\homes\dsgirao\slurm_tuturials\y_test.npy')
 
         # Ajustar shape se necessário
         if len(X_test.shape) == 3:
